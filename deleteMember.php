@@ -1,3 +1,4 @@
+<!-- Group 30 - Ben Kahl -->
 <?php
 	session_start();
 	if(isset($_GET["member_id"]) && !empty(trim($_GET["member_id"]))){
