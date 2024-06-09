@@ -72,7 +72,7 @@
                     echo "<td>";
                     echo "<a href='viewBorrowRecordMember.php?member_id=" . $row['member_id'] . "' title='View Borrow Record' data-toggle='tooltip'><span class='glyphicon glyphicon-eye-open'></span></a>";
                     echo "<a href='viewRatingsMember.php?member_id=" . $row['member_id'] . "' title='View Ratings' data-toggle='tooltip'><span class='glyphicon glyphicon-user'></span></a>";
-                    echo "<a href='editMember.php?member_id=" . $row['member_id'] . "' title='Edit Member' data-toggle='tooltip'><span class='glyphicon glyphicon-pencil'></span></a>";
+                    echo "<a href='updateMember.php?member_id=" . $row['member_id'] . "' title='Edit Member' data-toggle='tooltip'><span class='glyphicon glyphicon-pencil'></span></a>";
                     echo "<a href='deleteMember.php?member_id=" . $row['member_id'] . "' title='Delete Member' data-toggle='tooltip'><span class='glyphicon glyphicon-trash'></span></a>";
                     echo "</td>";
                     echo "</tr>";

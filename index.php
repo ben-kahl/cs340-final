@@ -66,7 +66,7 @@
                                     echo "<td>" . $row['street'] . " " . $row['city'] . " " . $row['state'] . " " . $row['zip'] . "</td>";
                                     echo "<td>";
                                         echo "<a href='viewLibrary.php?library_id=". $row['library_id']."' title='View Library Books and Members' data-toggle='tooltip'><span class='glyphicon glyphicon-user'></span></a>";
-                                        echo "<a href='editLibrary.php?library_id=". $row['library_id']."' title='Edit Library' data-toggle='tooltip'><span class='glyphicon glyphicon-pencil'></span></a>";
+                                        echo "<a href='updateLibrary.php?library_id=". $row['library_id']."' title='Edit Library' data-toggle='tooltip'><span class='glyphicon glyphicon-pencil'></span></a>";
                                         echo "<a href='deleteLibrary.php?library_id=". $row['library_id']."' title='Delete Library' data-toggle='tooltip'><span class='glyphicon glyphicon-trash'></span></a>";
                                     echo "</td>";
                                 echo "</tr>";
