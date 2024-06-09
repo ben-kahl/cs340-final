@@ -40,7 +40,11 @@
         $library_id = trim($_GET["library_id"]);
     }
     require_once "config.php";
+    echo "<div class='page-header clearfix'>";
     echo "<h2> Members </h2>";
+    echo"<h2 class='pull-left'>Member Details</h2>";
+    echo "<a href='createMember.php?library_id=" . $library_id . "' class='btn btn-success pull-right'>Add New Member</a>";
+    echo "</div>";
     $sql = "SELECT * FROM MEMBER WHERE library_id = ?";
     if ($stmt = mysqli_prepare($link, $sql)) {
         mysqli_stmt_bind_param($stmt, "i", $library_id);
@@ -83,7 +87,11 @@
             echo "ERROR: Could not able to execute $sql. <br>" . mysqli_error($link);
         }
     }
+    echo "<div class='page-header clearfix'>";
     echo "<h2> Books </h2>";
+    echo"<h2 class='pull-left'>Member Details</h2>";
+    echo "<a href='createBook.php?library_id=" . $library_id . "' class='btn btn-success pull-right'>Add New Book</a>";
+    echo "</div>";
     $sql2 = "SELECT * FROM BOOK WHERE library_id = ?";
     if ($stmt2 = mysqli_prepare($link, $sql2)) {
         mysqli_stmt_bind_param($stmt2, "i", $library_id);
@@ -127,9 +135,9 @@
                 // Free result set
                 mysqli_free_result($result2);
             }
-        } else {
-            echo "<p class='lead'><em>No records were found for Dept Stats.</em></p>";
-        }
+            } else {
+                echo "<p class='lead'><em>No books were found.</em></p>";
+            }
     } else {
         echo "ERROR: Could not able to execute $sql2. <br>" . mysqli_error($link);
     }
