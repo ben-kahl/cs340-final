@@ -70,8 +70,8 @@
                     echo "<td>" . $row['date_joined'] . "</td>";
                     echo "<td>" . $row['library_id'] . "</td>";
                     echo "<td>";
-                    echo "<a href='viewBorrowRecord.php?member_id=" . $row['member_id'] . "' title='View Borrow Record' data-toggle='tooltip'><span class='glyphicon glyphicon-eye-open'></span></a>";
-                    echo "<a href='viewRatings.php?member_id=" . $row['member_id'] . "' title='View Ratings' data-toggle='tooltip'><span class='glyphicon glyphicon-user'></span></a>";
+                    echo "<a href='viewBorrowRecordMember.php?member_id=" . $row['member_id'] . "' title='View Borrow Record' data-toggle='tooltip'><span class='glyphicon glyphicon-eye-open'></span></a>";
+                    echo "<a href='viewRatingsMember.php?member_id=" . $row['member_id'] . "' title='View Ratings' data-toggle='tooltip'><span class='glyphicon glyphicon-user'></span></a>";
                     echo "<a href='editMember.php?member_id=" . $row['member_id'] . "' title='Edit Member' data-toggle='tooltip'><span class='glyphicon glyphicon-pencil'></span></a>";
                     echo "<a href='deleteMember.php?member_id=" . $row['member_id'] . "' title='Delete Member' data-toggle='tooltip'><span class='glyphicon glyphicon-trash'></span></a>";
                     echo "</td>";
@@ -89,7 +89,7 @@
     }
     echo "<div class='page-header clearfix'>";
     echo "<h2> Books </h2>";
-    echo"<h2 class='pull-left'>Member Details</h2>";
+    echo"<h2 class='pull-left'>Book Details</h2>";
     echo "<a href='createBook.php?library_id=" . $library_id . "' class='btn btn-success pull-right'>Add New Book</a>";
     echo "</div>";
     $sql2 = "SELECT * FROM BOOK WHERE library_id = ?";
@@ -124,8 +124,8 @@
                     }
                     echo "<td>" . $row['library_id'] . "</td>";
                     echo "<td>";
-                    echo "<a href='viewBorrowRecord.php?book_id=" . $row['book_id'] . "' title='View Borrow Record' data-toggle='tooltip'><span class='glyphicon glyphicon-eye-open'></span></a>";
-                    echo "<a href='viewRatings.php?book_id=" . $row['book_id'] . "' title='View Ratings' data-toggle='tooltip'><span class='glyphicon glyphicon-user'></span></a>";
+                    echo "<a href='viewBorrowRecordBook.php?book_id=" . $row['book_id'] . "' title='View Borrow Record' data-toggle='tooltip'><span class='glyphicon glyphicon-eye-open'></span></a>";
+                    echo "<a href='viewRatingsBook.php?book_id=" . $row['book_id'] . "' title='View Ratings' data-toggle='tooltip'><span class='glyphicon glyphicon-user'></span></a>";
                     echo "<a href='deleteBook.php?book_id=" . $row['book_id'] . "' title='Delete Book' data-toggle='tooltip'><span class='glyphicon glyphicon-trash'></span></a>";
                     echo "</td>";
                     echo "</tr>";
