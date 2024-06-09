@@ -98,7 +98,6 @@
         if (mysqli_stmt_execute($stmt2)) {
             $result2 = mysqli_stmt_get_result($stmt2);
             if (mysqli_num_rows($result2) > 0) {
-                echo "<div class='col-md-4'>";
                 echo "<table class='table table-bordered table-striped'>";
                 echo "<thead>";
                 echo "<tr>";
@@ -141,6 +140,10 @@
     } else {
         echo "ERROR: Could not able to execute $sql2. <br>" . mysqli_error($link);
     }
+    echo "<h2>Actions</h2>";
+    echo "<a href='createBorrowRecord.php?library_id=" . $library_id . "' class='btn btn-success pull-left'>Check out book</a>";
+    echo "<a href='createBorrowRecord.php?library_id=" . $library_id . "' class='btn btn-success pull-left'>Check book in</a>";
+    echo "<a href='createRating.php?library_id=" . $library_id . "' class='btn btn-success pull-left'>Rate Book</a>";
     mysqli_close($link);
     ?>
 </body>
