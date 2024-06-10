@@ -5,10 +5,34 @@ require_once "config.php";
 
 $member_ids = $book_ids = array();
 
-$member_id = $book_id = $rating = $rating = "";
+$member_id = $book_id = $rating = "";
 $member_id_err = $book_id_err = $rating_err = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $sql1 = "SELECT M.member_id, B.book_id
+    FROM MEMBER M 
+    JOIN BOOK B ON M.library_id = B.library_id 
+    WHERE M.library_id = ?";
+    if ($stmt1 = mysqli_prepare($link, $sql1)) {
+        mysqli_stmt_bind_param($stmt1, "i", $library_id);
+        if (mysqli_stmt_execute($stmt1)) {
+            $result1 = mysqli_stmt_get_result($stmt1);
+            if (mysqli_num_rows($result1) > 0) {
+                while ($row1 = mysqli_fetch_assoc($result1)) {
+                    $member_ids[] = $row1["member_id"];
+                    $book_ids[] = $row1["book_id"];
+                }
+            } else {
+                echo "No results found.";
+            }
+        } else {
+            echo "Error executing query.";
+        }
+        mysqli_stmt_close($stmt1);
+    } else {
+        echo "Error preparing statement.";
+    }
+
     // Validate Book ID
     $book_id = trim($_POST["book_id"]);
     if (empty($book_id)) {
@@ -38,14 +62,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Check input errors before inserting in database
     if (empty($member_id_err) && empty($book_id_err) && empty($rating_err)) {
         // Prepare an insert statement
-        $sql = "INSERT INTO RATINGS (rating_id, member_id, book_id, rating) VALUES (?, ?, ?, ?)";
+        $sql = "INSERT INTO RATINGS (member_id, book_id, rating) VALUES (?, ?, ?)";
 
         if ($stmt = mysqli_prepare($link, $sql)) {
             // Bind variables to the prepared statement as parameters
-            mysqli_stmt_bind_param($stmt, "iiis", $param_rating_id, $param_member_id, $param_book_id, $param_rating);
+            mysqli_stmt_bind_param($stmt, "iis", $param_member_id, $param_book_id, $param_rating);
 
             // Set parameters
-            $param_rating_id = $rating_id;
             $param_member_id = $member_id;
             $param_book_id = $book_id;
             $param_rating = $rating;
@@ -73,14 +96,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Check Out Book</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.css">
     <style type="text/css">
-        .wrapper { width: 500px; margin: 0 auto; }
+        .wrapper {
+            width: 500px;
+            margin: 0 auto;
+        }
     </style>
 </head>
+
 <body>
     <div class="wrapper">
         <div class="container-fluid">
@@ -114,4 +142,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
     </div>
 </body>
+
 </html>

@@ -7,7 +7,7 @@ require_once "config.php";
 $fname = $lname = $dob = $date_joined = "";
 $member_id_err = $fname_err = $lname_err = $dob_err = $date_joined_err = $library_id_err = "";
 
-if($_SERVER["REQUEST_METHOD"] == "POST"){
+if($_SERVER["REQUEST_METHOD"] == "POST") {
     // Validate First name
     $fname = trim($_POST["fname"]);
     if(empty($fname)){
@@ -34,10 +34,11 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     if(empty($date_joined)){
         $date_joined = "Please enter date joined.";     
     }
+
     // Check input errors before inserting in database
     if(empty($fname_err) && empty($lname_err) && empty($dob_err) && empty($date_joined_err) && empty($library_id_err)){
         // Prepare an insert statement
-        $sql = "INSERT INTO MEMBER (fname, lname, dob, date_joined,library_id) 
+        $sql = "INSERT INTO MEMBER (fname, lname, dob, date_joined, library_id) 
 		        VALUES (?, ?, ?, ?, ?)";
          
         if($stmt = mysqli_prepare($link, $sql)){

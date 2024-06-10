@@ -105,7 +105,7 @@
                 echo "<tr>";
                 echo "<th width=10%>Title</th>";
                 echo "<th width = 10%>Author</th>";
-                echo "<th width = 10%>Genres</th>";
+                // echo "<th width = 10%>Genres</th>";
                 echo "<th width = 10%>Length</th>";
                 echo "<th width = 10%>ISBN</th>";
                 echo "<th width = 1%>Availabile</th>";
@@ -128,6 +128,7 @@
                     echo "<td>";
                     echo "<a href='viewBorrowRecordBook.php?book_id=" . $row['book_id'] . "' title='View Borrow Record' data-toggle='tooltip'><span class='glyphicon glyphicon-eye-open'></span></a>";
                     echo "<a href='viewRatingsBook.php?book_id=" . $row['book_id'] . "' title='View Ratings' data-toggle='tooltip'><span class='glyphicon glyphicon-user'></span></a>";
+                    echo "<a href='checkInBook.php?book_id=" . $row['book_id'] . "' title='Check Book In' data-toggle='tooltip'><span class='glyphicon glyphicon-book'></span></a>";
                     echo "<a href='deleteBook.php?book_id=" . $row['book_id'] . "' title='Delete Book' data-toggle='tooltip'><span class='glyphicon glyphicon-trash'></span></a>";
                     echo "</td>";
                     echo "</tr>";
@@ -145,7 +146,6 @@
     }
     echo "<h2>Actions</h2>";
     echo "<a href='createBorrowRecord.php?library_id=" . $library_id . "' class='btn btn-success pull-left'>Check out book</a>";
-    echo "<a href='createBorrowRecord.php?library_id=" . $library_id . "' class='btn btn-success pull-left'>Check book in</a>";
     echo "<a href='createRating.php?library_id=" . $library_id . "' class='btn btn-success pull-left'>Rate Book</a>";
     mysqli_close($link);
     ?>

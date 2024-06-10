@@ -1,3 +1,4 @@
+<!-- Group 30 - Ben Kahl -->
 <?php
     session_start();
     // Include config file

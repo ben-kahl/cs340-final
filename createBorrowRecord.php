@@ -1,20 +1,36 @@
+<!-- Group 30 - Ben Kahl -->
 <?php
 session_start();
 require_once "config.php";
+
+$library_id = $_SESSION["library_id"];
+$borrow_trigger_sql = "borrowTrigger.sql";
+$borrow_trigger_query = file_get_contents($borrow_trigger_sql);
 
 $member_ids = $book_ids = $availabilities = array();
 
 $member_id = $book_id = $date = "";
 $member_id_err = $book_id_err = $member_ids_err = $book_ids_err = $date_err = "";
 
-if (isset($_GET["library_id"]) && !empty(trim($_GET["library_id"]))) {
-    $_SESSION["library_id"] = trim($_GET["library_id"]);
-    $library_id = $_SESSION["library_id"];
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    if (mysqli_multi_query($link, $borrow_trigger_query)) {
+        do {
+            // Consume all result sets to enable next query
+            if ($result = mysqli_store_result($link)) {
+                mysqli_free_result($result);
+            }
+        } while (mysqli_next_result($link));
+
+        echo "Trigger created successfully.";
+    } else {
+        echo "Error creating trigger: " . mysqli_error($link);
+    }
 
     $sql1 = "SELECT M.member_id, B.book_id, B.available 
-             FROM MEMBER M 
-             JOIN BOOK B ON M.library_id = B.library_id 
-             WHERE M.library_id = ?";
+         FROM MEMBER M 
+         JOIN BOOK B ON M.library_id = B.library_id 
+         WHERE M.library_id = ?";
     if ($stmt1 = mysqli_prepare($link, $sql1)) {
         mysqli_stmt_bind_param($stmt1, "i", $library_id);
         if (mysqli_stmt_execute($stmt1)) {
@@ -35,11 +51,7 @@ if (isset($_GET["library_id"]) && !empty(trim($_GET["library_id"]))) {
     } else {
         echo "Error preparing statement.";
     }
-} else {
-    echo "Invalid Library ID.";
-}
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Validate Book ID
     $book_id = trim($_POST["book_id"]);
     if (empty($book_id)) {
@@ -103,14 +115,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Check Out Book</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.css">
     <style type="text/css">
-        .wrapper { width: 500px; margin: 0 auto; }
+        .wrapper {
+            width: 500px;
+            margin: 0 auto;
+        }
     </style>
 </head>
+
 <body>
     <div class="wrapper">
         <div class="container-fluid">
@@ -144,4 +161,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
     </div>
 </body>
+
 </html>

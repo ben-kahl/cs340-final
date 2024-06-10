@@ -1,7 +1,9 @@
+<!-- Group 30 - Ben Kahl -->
 <?php
 session_start();
 // Include config file
 require_once "config.php";
+$_SESSION['previous_page'] = $_SERVER['REQUEST_URI'];
 
 // Define variables and initialize with empty values
 $name = $street = $city = $state = $zip = "";

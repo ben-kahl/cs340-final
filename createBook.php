@@ -3,6 +3,7 @@
 session_start();
 $library_id = $_SESSION["library_id"];
 require_once "config.php";
+$_SESSION['previous_page'] = $_SERVER['REQUEST_URI'];
 
 $book_id = $available = $isbn = $title = $author = $length = "";
 $book_id_err = $available_err = $isbn_err = $title_err = $author_err = $length_err = $ibrary_id_err = "";
@@ -56,8 +57,8 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             // Attempt to execute the prepared statement
             if(mysqli_stmt_execute($stmt)){
                 // Records created successfully. Redirect to landing page
-				    header("location: index.php");
-					exit();
+                header("location: index.php");
+				exit();
             } else{
                 echo "<center><h4>Error while creating new book</h4></center>";
 				echo "Error: " . mysqli_error($link);

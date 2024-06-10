@@ -63,9 +63,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             $param_name = $name;
             // Attempt to execute the prepared statement
             if(mysqli_stmt_execute($lStmt)){
-                // Records created successfully. Redirect to landing page
-				    header("location: index.php");
-					exit();
+                //Do nothing
             } else{
                 echo "<center><h4>Error while creating new library</h4></center>";
             }
@@ -84,7 +82,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
             $param_zip = $zip;
 
             if(mysqli_stmt_execute($laStmt)){
-                header("location: index.php");
+                header("location: " . $_SESSION['previous_page']);
                 exit();
             } else{
                 echo "<center><h4>Error while creating new Library Address</h4></center>";
