@@ -1,36 +1,37 @@
-<!-- Group 30 - Ben Kahl -->
 <?php
 session_start();
 require_once "config.php";
 
-$member_ids = $book_ids = $availablities = array();
+$member_ids = $book_ids = $availabilities = array();
 
-$member_id = $book_id  = $date = "";
+$member_id = $book_id = $date = "";
 $member_id_err = $book_id_err = $member_ids_err = $book_ids_err = $date_err = "";
 
-if(isset($_GET["library_id"]) && !empty(trim($_GET["library_id"]))){
+if (isset($_GET["library_id"]) && !empty(trim($_GET["library_id"]))) {
     $_SESSION["library_id"] = trim($_GET["library_id"]);
     $library_id = $_SESSION["library_id"];
 
-    $sql1 = "SELECT M.member_id, M.library_id, B.book_id, B.library_id, B.available FROM MEMBER M JOIN BOOK B ON M.library_id = B.library_id WHERE M.library_id = ?";
-    if ($stmt1 = mysqli_prepare($link, $sql1)){
-        mysqli_stmt_bind_param($stmt1,"i", $library_id);
+    $sql1 = "SELECT M.member_id, B.book_id, B.available 
+             FROM MEMBER M 
+             JOIN BOOK B ON M.library_id = B.library_id 
+             WHERE M.library_id = ?";
+    if ($stmt1 = mysqli_prepare($link, $sql1)) {
+        mysqli_stmt_bind_param($stmt1, "i", $library_id);
         if (mysqli_stmt_execute($stmt1)) {
             $result1 = mysqli_stmt_get_result($stmt1);
-            if (mysqli_num_rows($result1) > 0){
-                while ($row1 = mysqli_fetch_assoc($result1)){
-                    $book_ids[] = $row1["book_id"];
+            if (mysqli_num_rows($result1) > 0) {
+                while ($row1 = mysqli_fetch_assoc($result1)) {
                     $member_ids[] = $row1["member_id"];
-                    $availablities[$row1["book_id"]] = $row1["available"];
+                    $book_ids[] = $row1["book_id"];
+                    $availabilities[$row1["book_id"]] = $row1["available"];
                 }
-            }
-            else {
+            } else {
                 echo "No results found.";
             }
         } else {
-            echo "Error executing query";
+            echo "Error executing query.";
         }
-    mysqli_stmt_close( $stmt1 );
+        mysqli_stmt_close($stmt1);
     } else {
         echo "Error preparing statement.";
     }
@@ -39,46 +40,40 @@ if(isset($_GET["library_id"]) && !empty(trim($_GET["library_id"]))){
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Validate First name
+    // Validate Book ID
     $book_id = trim($_POST["book_id"]);
     if (empty($book_id)) {
-        $book_id_err = "Please enter a fname.";
+        $book_id_err = "Please enter a book ID.";
     } elseif (!ctype_digit($book_id)) {
-        $book_id_err = "Please enter a valid fname.";
-    } elseif (!(in_array($book_id, $book_ids) && $availablities[$book_id])) {
+        $book_id_err = "Please enter a valid book ID.";
+    } elseif (!(in_array($book_id, $book_ids) && $availabilities[$book_id])) {
         $book_id_err = "Please select an available book.";
     }
 
-    // Validate SSN
+    // Validate Member ID
     $member_id = trim($_POST["member_id"]);
     if (empty($member_id)) {
-        $member_id_err = "Please enter member_id.";
+        $member_id_err = "Please enter member ID.";
     } elseif (!ctype_digit($member_id)) {
-        $member_id_err = "Please enter a positive integer value of member_id.";
+        $member_id_err = "Please enter a positive integer value for member ID.";
     } elseif (!in_array($member_id, $member_ids)) {
         $member_id_err = "Please select an existing member.";
     }
-    // Validate Birthdate
+
+    // Validate Date
     $date = trim($_POST["date"]);
     if (empty($date)) {
-        $date_err = "Please enter date checked out.";
+        $date_err = "Please enter the date checked out.";
     }
 
     // Check input errors before inserting in database
     if (empty($member_id_err) && empty($book_id_err) && empty($date_err)) {
         // Prepare an insert statement
-        $sql = "INSERT INTO BORROWS (member_id, book_id, date) 
-		        VALUES (?, ?, ?)";
+        $sql = "INSERT INTO BORROWS (member_id, book_id, date) VALUES (?, ?, ?)";
 
         if ($stmt = mysqli_prepare($link, $sql)) {
             // Bind variables to the prepared statement as parameters
-            mysqli_stmt_bind_param(
-                $stmt,
-                "iis",
-                $param_member_id,
-                $param_book_id,
-                $param_date
-            );
+            mysqli_stmt_bind_param($stmt, "iis", $param_member_id, $param_book_id, $param_date);
 
             // Set parameters
             $param_member_id = $member_id;
@@ -108,19 +103,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
-    <title>Create Member</title>
+    <title>Check Out Book</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.css">
     <style type="text/css">
-        .wrapper {
-            width: 500px;
-            margin: 0 auto;
-        }
+        .wrapper { width: 500px; margin: 0 auto; }
     </style>
 </head>
-
 <body>
     <div class="wrapper">
         <div class="container-fluid">
@@ -136,10 +126,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <input type="text" name="member_id" class="form-control" value="<?php echo $member_id; ?>">
                             <span class="help-block"><?php echo $member_id_err; ?></span>
                         </div>
-
                         <div class="form-group <?php echo (!empty($book_id_err)) ? 'has-error' : ''; ?>">
                             <label>Book ID</label>
-                            <input type="text" name="book_id" class="form-control" value="<?php echo $book_id ?>">
+                            <input type="text" name="book_id" class="form-control" value="<?php echo $book_id; ?>">
                             <span class="help-block"><?php echo $book_id_err; ?></span>
                         </div>
                         <div class="form-group <?php echo (!empty($date_err)) ? 'has-error' : ''; ?>">
@@ -155,5 +144,4 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
     </div>
 </body>
-
 </html>

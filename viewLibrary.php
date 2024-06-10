@@ -51,12 +51,13 @@
         if (mysqli_stmt_execute($stmt)) {
             $result = mysqli_stmt_get_result($stmt);
             if (mysqli_num_rows($result) > 0) {
-                echo "<div class = 'col-md-4'>";
+                echo "<div class = 'col-md-12'>";
                 echo "<table class='table table-bordered table-striped'>";
                 echo "<thead>";
                 echo "<tr>";
                 echo "<th width=10%>First Name</th>";
                 echo "<th width=10%>Last Name</th>";
+                echo "<th width=10%>Date of Birth</th>";
                 echo "<th width=10%>Date Joined</th>";
                 echo "<th width=1%>Library ID</th>";
                 echo "<th width=10%>Action</th>";
@@ -67,6 +68,7 @@
                     echo "<tr>";
                     echo "<td>" . $row['fname'] . "</td>";
                     echo "<td>" . $row['lname'] . "</td>";
+                    echo "<td>" . $row["dob"] . "</td>";
                     echo "<td>" . $row['date_joined'] . "</td>";
                     echo "<td>" . $row['library_id'] . "</td>";
                     echo "<td>";
