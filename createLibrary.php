@@ -50,17 +50,16 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     // Check input errors before inserting in database
     if(empty($name_err) && empty($street_err) && empty($library_id_err) && empty($zip_err) && empty($state_err) && empty($city_err)){
         // Prepare an insert statement
-        $libraryInsert = "INSERT INTO LIBRARY (library_id, name) 
-		        VALUES (?, ?)";
+        $libraryInsert = "INSERT INTO LIBRARY (name) 
+		        VALUES (?)";
          
-        $libraryAddrInsert = "INSERT INTO LIBRARY_ADDR (addr_id, library_id, street, city, state, zip)
+        $libraryAddrInsert = "INSERT INTO LIBRARY_ADDR (library_id, street, city, state, zip)
                 VALUES (?, ?, ?, ?, ?, ?)";
         if($lStmt = mysqli_prepare($link, $libraryInsert)){
             // Bind variables to the prepared statement as parameters
-            mysqli_stmt_bind_param($lStmt, "is", $param_library_id, $param_name);
+            mysqli_stmt_bind_param($lStmt, "s", $param_name);
             
             // Set parameters
-            $param_library_id = $library_id;
             $param_name = $name;
             // Attempt to execute the prepared statement
             if(mysqli_stmt_execute($lStmt)){
@@ -68,8 +67,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 				    header("location: index.php");
 					exit();
             } else{
-                echo "<center><h4>Error while creating new employee</h4></center>";
-				$library_id_err = "Enter a unique library_id.";
+                echo "<center><h4>Error while creating new library</h4></center>";
             }
         }
          
@@ -77,9 +75,8 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         mysqli_stmt_close($lStmt);
 
         if($laStmt = mysqli_prepare($link, $libraryAddrInsert)){
-            mysqli_stmt_bind_param($laStmt, "iisssi", $param_addr_id, $param_library_id, $param_street, $param_city,
+            mysqli_stmt_bind_param($laStmt, "iisssi", $param_library_id, $param_street, $param_city,
                 $param_state, $param_zip);
-            $param_addr_id = $library_id;
             $param_library_id = $library_id;
             $param_street = $street;
             $param_city = $city;

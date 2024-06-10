@@ -1,8 +1,10 @@
 <!-- Group 30 - Ben Kahl -->
 <?php
+session_start();
+$library_id = $_SESSION["library_id"];
 require_once "config.php";
 
-$member_id = $fname = $lname = $dob = $date_joined = $library_id = "";
+$fname = $lname = $dob = $date_joined = "";
 $member_id_err = $fname_err = $lname_err = $dob_err = $date_joined_err = $library_id_err = "";
 
 if($_SERVER["REQUEST_METHOD"] == "POST"){
@@ -21,13 +23,6 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
         $lname_err = "Please enter a valid lname.";
     } 
  
-    // Validate SSN
-    $member_id = trim($_POST["member_id"]);
-    if(empty($member_id)){
-        $member_id_err = "Please enter member_id.";     
-    } elseif(!ctype_digit($member_id)){
-        $member_id_err = "Please enter a positive integer value of member_id.";
-    } 
 	// Validate Birthdate
     $dob = trim($_POST["dob"]);
     if(empty($dob)){
@@ -39,25 +34,18 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     if(empty($date_joined)){
         $date_joined = "Please enter date joined.";     
     }
-
-	// Validate Department
-    $library_id = trim($_POST["library_id"]);
-    if(empty($library_id)){
-        $library_id_err = "Please enter a department number.";     		
-	}
     // Check input errors before inserting in database
-    if(empty($member_id_err) && empty($lname_err) && empty($library_id_err) && empty($fname) && empty($date_joined) && empty($dob)){
+    if(empty($fname_err) && empty($lname_err) && empty($dob_err) && empty($date_joined_err) && empty($library_id_err)){
         // Prepare an insert statement
-        $sql = "INSERT INTO MEMBER (member_id, fname, lname, dob, date_joined,library_id) 
-		        VALUES (?, ?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO MEMBER (fname, lname, dob, date_joined,library_id) 
+		        VALUES (?, ?, ?, ?, ?)";
          
         if($stmt = mysqli_prepare($link, $sql)){
             // Bind variables to the prepared statement as parameters
-            mysqli_stmt_bind_param($stmt, "isssdssi", $param_member_id, $param_fname, $param_lname, 
+            mysqli_stmt_bind_param($stmt, "ssssi", $param_fname, $param_lname, 
 				$param_dob, $param_date_joined, $param_library_id);
             
             // Set parameters
-			$param_member_id = $member_id;
             $param_lname = $lname;
 			$param_fname = $fname;
 			$param_dob = $dob;
@@ -77,6 +65,8 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
          
         // Close statement
         mysqli_stmt_close($stmt);
+    } else {
+        echo "Issue with input";
     }
 
     // Close connection
@@ -107,12 +97,6 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                     </div>
                     <p>Please fill this form and submit to add an Member to the database.</p>
                     <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
-						<div class="form-group <?php echo (!empty($member_id_err)) ? 'has-error' : ''; ?>">
-                            <label>Member ID</label>
-                            <input type="text" name="member_id" class="form-control" value="<?php echo $member_id; ?>">
-                            <span class="help-block"><?php echo $member_id_err;?></span>
-                        </div>
-                 
 						<div class="form-group <?php echo (!empty($fname_err)) ? 'has-error' : ''; ?>">
                             <label>First Name</label>
                             <input type="text" name="fname" class="form-control" value="<?php echo $fname; ?>">
@@ -130,13 +114,8 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                         </div>
                         <div class="form-group <?php echo (!empty($date_joined_err)) ? 'has-error' : ''; ?>">
                             <label>Date Joined</label>
-                            <input type="date" name="date_joined" class="form-control" value="<?php echo $date_joined; ?>">
+                            <input type="date" name="date_joined" class="form-control" value="<?php echo date('Y-m-d'); ?>">
                             <span class="help-block"><?php echo $date_joined_err;?></span>
-                        </div>
-                        <div class="form-group <?php echo (!empty($library_id_err)) ? 'has-error' : ''; ?>">
-                            <label>Library ID</label>
-                            <input type="number" min ="1" name="library_id" class="form-control" value="<?php echo $library_id; ?>">
-                            <span class="help-block"><?php echo $library_id_err;?></span>
                         </div>
                         <input type="submit" class="btn btn-primary" value="Submit">
                         <a href="index.php" class="btn btn-default">Cancel</a>

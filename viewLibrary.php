@@ -105,6 +105,7 @@
                 echo "<tr>";
                 echo "<th width=10%>Title</th>";
                 echo "<th width = 10%>Author</th>";
+                echo "<th width = 10%>Genres</th>";
                 echo "<th width = 10%>Length</th>";
                 echo "<th width = 10%>ISBN</th>";
                 echo "<th width = 1%>Availabile</th>";

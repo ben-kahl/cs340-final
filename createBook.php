@@ -1,10 +1,11 @@
 <!-- Group 30 - Ben Kahl -->
 <?php
+session_start();
+$library_id = $_SESSION["library_id"];
 require_once "config.php";
 
-$book_id = $available = $isbn = $title = $author = $length = $ibrary_id = "";
+$book_id = $available = $isbn = $title = $author = $length = "";
 $book_id_err = $available_err = $isbn_err = $title_err = $author_err = $length_err = $ibrary_id_err = "";
-
 
 if($_SERVER["REQUEST_METHOD"] == "POST"){
     // Validate First title
@@ -18,7 +19,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     $isbn = trim($_POST["isbn"]);
     if(empty($isbn)){
         $isbn_err = "Please enter a isbn.";
-    } elseif(!filter_var($isbn, FILTER_VALIDATE_REGEXP, array("options"=>array("regexp"=>"/^[0-9]{13,13}+$/")))){
+    } elseif(!filter_var(!preg_match("/^[0-9]{13}$/", $isbn))){
         $isbn_err = "Please enter a valid isbn.";
     } 
 
@@ -35,19 +36,17 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
     } elseif(!filter_var($length, FILTER_VALIDATE_REGEXP, array("options"=>array("regexp"=>"/^[0-9]+$/")))){
         $length_err = "Please enter a valid length.";
     }
-  
     // Check input errors before inserting in database
-    if(empty($title_err) && empty($isbn_err) && empty($book_id_err) && empty($zip_err) && empty($state_err) && empty($author_err)){
+    if(empty($title_err) && empty($isbn_err) && empty($author_err) && empty($library_id_err) && empty($length_err)){
         // Prepare an insert statement
-        $bookInsert = "INSERT INTO BOOK (book_id, available, isbn, title, author, length, library_id) 
-		        VALUES (?, ?, ?, ?, ?, ?, ?)";
+        $bookInsert = "INSERT INTO BOOK (available, isbn, title, author, length, library_id) 
+		        VALUES (?, ?, ?, ?, ?, ?)";
 
         if($stmt = mysqli_prepare($link, $bookInsert)){
             // Bind variables to the prepared statement as parameters
-            mysqli_stmt_bind_param($stmt, "iiissii", $param_book_id, $param_available, $param_isbn, $param_title, $param_author, $param_length, $param_library_id);
-            
+            mysqli_stmt_bind_param($stmt, "isssii", $param_available, $param_isbn, $param_title, $param_author, $param_length, $param_library_id);
+            echo "Prepared statement";
             // Set parameters
-            $param_book_id = $book_id;
             $param_available = 1;
             $param_isbn = $isbn;
             $param_title = $title;
@@ -60,17 +59,21 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
 				    header("location: index.php");
 					exit();
             } else{
-                echo "<center><h4>Error while creating new employee</h4></center>";
-				$book_id_err = "Enter a unique book_id.";
+                echo "<center><h4>Error while creating new book</h4></center>";
+				echo "Error: " . mysqli_error($link);
             }
+        } else {
+            echo "<center><h4>Error preparing statement</h4></center>";
+            echo "Error: " . mysqli_error($link); // Show SQL error
         }
          
         // Close statement
-        mysqli_stmt_close($lStmt);
-
-    // Close connection
-    mysqli_close($link);
+        mysqli_stmt_close($stmt);
+    } else {
+        echo "Issue with input";
     }
+    // Close connection
+    mysqli_close($link); 
 }
 ?>
 
@@ -116,7 +119,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST"){
                             <label>ISBN</label>
                             <input type="text" name="isbn" class="form-control" value="<?php echo $isbn; ?>">
                             <span class="help-block"><?php echo $isbn_err;?></span>
-                        </div>            
+                        </div>
                         <input type="submit" class="btn btn-primary" value="Submit">
                         <a href="index.php" class="btn btn-default">Cancel</a>
                     </form>
