@@ -40,6 +40,33 @@
         $library_id = trim($_GET["library_id"]);
     }
     require_once "config.php";
+
+    function get_average_rating($link, $bookID) {
+        $avgR = "SELECT get_average_rating(?) AS avgRating";
+        if ($avgStmt = mysqli_prepare($link, $avgR)) {
+            mysqli_stmt_bind_param($avgStmt, "i", $bookID);
+            if (mysqli_stmt_execute($avgStmt)) {
+                $avgResults = mysqli_stmt_get_result($avgStmt);
+                if ($row = mysqli_fetch_assoc($avgResults)) {
+                    return $row['avgRating'];
+                }
+            }
+        }
+        return null;
+    }
+
+    function get_check_out_count($link, $bookID) { 
+        $count = "SELECT get_check_out_count(?) AS checkOutCount";
+        if ($countStmt = mysqli_prepare($link, $count)) {
+            mysqli_stmt_bind_param($countStmt, "i", $bookID);
+            if (mysqli_stmt_execute($countStmt)) {
+                $countResults = mysqli_stmt_get_result($countStmt);
+                if ($row = mysqli_fetch_assoc($countResults)) {
+                    return $row["checkOutCount"];
+                }
+            }
+        }
+    }
     echo "<div class='page-header clearfix'>";
     echo "<h2> Members </h2>";
     echo"<h2 class='pull-left'>Member Details</h2>";
@@ -108,22 +135,28 @@
                 // echo "<th width = 10%>Genres</th>";
                 echo "<th width = 10%>Length</th>";
                 echo "<th width = 10%>ISBN</th>";
+                echo "<th width = 1%>Average Rating</th>";
                 echo "<th width = 1%>Availabile</th>";
+                echo "<th width = 1%>Times Checked Out</th>";
                 echo "<th width = 1%>Library ID</th>";
                 echo "<th width = 10%>Action</th>";
                 echo "</thead>";
                 echo "<tbody>";
                 while ($row = mysqli_fetch_array($result2)) {
+                    $avgRating = get_average_rating($link, $row['book_id']);
+                    $checkCount = get_check_out_count($link, $row['book_id']);
                     echo "<tr>";
                     echo "<td>" . $row['title'] . "</td>";
                     echo "<td>" . $row['author'] . "</td>";
                     echo "<td>" . $row['length'] . "</td>";
                     echo "<td>" . $row['isbn'] . "</td>";
+                    echo "<td>" . $avgRating . "</td>";
                     if ($row['available'] == 1) {
                         echo "<td>Yes</td>";
                     } else {
                         echo "<td>No</td>";
                     }
+                    echo "<td>". $checkCount . "</td>";
                     echo "<td>" . $row['library_id'] . "</td>";
                     echo "<td>";
                     echo "<a href='viewBorrowRecordBook.php?book_id=" . $row['book_id'] . "' title='View Borrow Record' data-toggle='tooltip'><span class='glyphicon glyphicon-eye-open'></span></a>";
